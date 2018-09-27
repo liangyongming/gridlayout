@@ -15,10 +15,14 @@
          @click.self.stop="handleItemCheck"
     >
         <slot></slot>
-        <span class="vue-grid-edit" title="编辑" @click="handleItemEdit">编辑</span>
-        <span class="vue-grid-del" title="删除" @click="handleItemDel">删除</span>
-        <span v-if="resizable" ref="handle" :class="resizableHandleClass"></span>
-        <!--<span v-if="draggable" ref="dragHandle" class="vue-draggable-handle"></span>-->
+        <span v-show="resizable && isChecked" ref="handle" :class="resizableHandleClass"></span>
+        <span v-show="resizable && isChecked" ref="handleSw" class="vue-resizable-handle sw-icon"></span>
+        <span v-show="resizable && isChecked" ref="handleNe" class="vue-resizable-handle ne-icon"></span>
+        <span v-show="resizable && isChecked" ref="handleNw" class="vue-resizable-handle nw-icon"></span>
+        <span v-show="resizable && isChecked" ref="handleE" class="vue-resizable-handle e-icon"></span>
+        <span v-show="resizable && isChecked" ref="handleW" class="vue-resizable-handle w-icon"></span>
+        <span v-show="resizable && isChecked" ref="handleN" class="vue-resizable-handle n-icon"></span>
+        <span v-show="resizable && isChecked" ref="handleS" class="vue-resizable-handle s-icon"></span>
     </div>
 </template>
 <style>
@@ -50,7 +54,7 @@
     }
 
     .vue-grid-item.vue-grid-placeholder {
-        background: red;
+        background:green;
         opacity: 0.2;
         transition-duration: 100ms;
         z-index: 2;
@@ -61,21 +65,66 @@
         user-select: none;
     }
     .vue-grid-item.grid-item-checked{
-        border:1px solid blue;
+        background:#fffff0;
+        border:1px dashed #3e3e3e;
     }
     .vue-grid-item > .vue-resizable-handle {
         position: absolute;
-        width: 20px;
-        height: 20px;
-        bottom: 0;
-        right: 0;
-        background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pg08IS0tIEdlbmVyYXRvcjogQWRvYmUgRmlyZXdvcmtzIENTNiwgRXhwb3J0IFNWRyBFeHRlbnNpb24gYnkgQWFyb24gQmVhbGwgKGh0dHA6Ly9maXJld29ya3MuYWJlYWxsLmNvbSkgLiBWZXJzaW9uOiAwLjYuMSAgLS0+DTwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DTxzdmcgaWQ9IlVudGl0bGVkLVBhZ2UlMjAxIiB2aWV3Qm94PSIwIDAgNiA2IiBzdHlsZT0iYmFja2dyb3VuZC1jb2xvcjojZmZmZmZmMDAiIHZlcnNpb249IjEuMSINCXhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbDpzcGFjZT0icHJlc2VydmUiDQl4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjZweCIgaGVpZ2h0PSI2cHgiDT4NCTxnIG9wYWNpdHk9IjAuMzAyIj4NCQk8cGF0aCBkPSJNIDYgNiBMIDAgNiBMIDAgNC4yIEwgNCA0LjIgTCA0LjIgNC4yIEwgNC4yIDAgTCA2IDAgTCA2IDYgTCA2IDYgWiIgZmlsbD0iIzAwMDAwMCIvPg0JPC9nPg08L3N2Zz4=');
+        width: 10px;
+        height: 10px;
+        bottom: -5px;
+        right: -5px;
+        border:1px solid #000;
+        background-color:#fff;
+        /* background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pg08IS0tIEdlbmVyYXRvcjogQWRvYmUgRmlyZXdvcmtzIENTNiwgRXhwb3J0IFNWRyBFeHRlbnNpb24gYnkgQWFyb24gQmVhbGwgKGh0dHA6Ly9maXJld29ya3MuYWJlYWxsLmNvbSkgLiBWZXJzaW9uOiAwLjYuMSAgLS0+DTwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DTxzdmcgaWQ9IlVudGl0bGVkLVBhZ2UlMjAxIiB2aWV3Qm94PSIwIDAgNiA2IiBzdHlsZT0iYmFja2dyb3VuZC1jb2xvcjojZmZmZmZmMDAiIHZlcnNpb249IjEuMSINCXhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbDpzcGFjZT0icHJlc2VydmUiDQl4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjZweCIgaGVpZ2h0PSI2cHgiDT4NCTxnIG9wYWNpdHk9IjAuMzAyIj4NCQk8cGF0aCBkPSJNIDYgNiBMIDAgNiBMIDAgNC4yIEwgNCA0LjIgTCA0LjIgNC4yIEwgNC4yIDAgTCA2IDAgTCA2IDYgTCA2IDYgWiIgZmlsbD0iIzAwMDAwMCIvPg0JPC9nPg08L3N2Zz4='); */
         background-position: bottom right;
         padding: 0 3px 3px 0;
         background-repeat: no-repeat;
         background-origin: content-box;
         box-sizing: border-box;
         cursor: se-resize;
+    }
+    .vue-grid-item > .vue-resizable-handle.sw-icon{
+        bottom:-5px;
+        left:-5px;
+        background-position: bottom left;
+        cursor: sw-resize;
+    }
+    .vue-grid-item > .vue-resizable-handle.ne-icon{
+        top:-5px;
+        right:-5px;
+        background-position: top left;
+        cursor: ne-resize;
+    }
+    .vue-grid-item > .vue-resizable-handle.nw-icon{
+        top:-5px;
+        left:-5px;
+        background-position: top right;
+        cursor: nw-resize;
+    }
+    .vue-grid-item > .vue-resizable-handle.e-icon{
+        top:50px;
+        right:-5px;
+        background-position: center right;
+        cursor: e-resize;
+    }
+    .vue-grid-item > .vue-resizable-handle.w-icon{
+        top:50px;
+        left:-5px;
+        background-position: center left;
+        cursor: w-resize;
+    }
+    .vue-grid-item > .vue-resizable-handle.n-icon{
+        top:-5px;
+        left:50px;
+        background-position: top center;
+        cursor: n-resize;
+    }
+    .vue-grid-item > .vue-resizable-handle.s-icon{
+        bottom:-5px;
+        left:50px;
+        background-position: bottom center;
+        cursor: s-resize;
     }
 
     .vue-grid-item > .vue-rtl-resizable-handle {
@@ -92,21 +141,6 @@
     
     .vue-grid-item.disable-userselect {
         user-select: none;
-    }
-    
-    .vue-grid-item .vue-grid-edit{
-        font-size:12px;
-        position: absolute;
-        top:0;
-        right:0;
-        width:25px;
-    }
-    .vue-grid-item .vue-grid-del{
-        font-size:12px;
-        position: absolute;
-        top:0;
-        right:25px;
-        width:25px;
     }
 
 </style>
@@ -455,14 +489,12 @@
                     }
                 }
                 this.style = style;
-
             },
             handleResize: function (event) {
                 const position = getControlPosition(event);
                 // Get the current drag point from the event. This is used as the offset.
                 if (position == null) return; // not possible but satisfies flow
                 const {x, y} = position;
-
                 const newSize = {width: 0, height: 0};
                 let pos;
                 switch (event.type) {
@@ -498,6 +530,8 @@
 //                        console.log("### resize end => " + JSON.stringify(newSize));
                         this.resizing = null;
                         this.isResizing = false;
+                        //处理resizeHandle的位置;
+                        this.handlePointerPos(pos);
                         break;
                     }
                 }
@@ -794,17 +828,26 @@
                     this.eventBus.$emit("resizeEvent", "resizeend", this.i, this.innerX, this.innerY, pos.h, pos.w);
                 }
             },
-            //add
-            handleItemDel:function(){
-                this.$emit("delete",this);
-            },
-            handleItemEdit:function(){
-                this.$emit("edit",this)
-            },
             handleItemCheck:function(){
+                let pos=this.calcPosition(this.innerX, this.innerY, this.innerW, this.innerH);
+                this.handlePointerPos(pos);
+                
                 // this.$emit("checked",this);
-                this.isChecked=!this.isChecked;
+                var itemArr=this.$parent.$children;
+                if(itemArr.length>0){
+                    itemArr.forEach(ele => {
+                        ele.isChecked=false;
+                    });
+                }
+                this.isChecked=true;
                 console.log("isChecked:"+this.isChecked);
+            },
+            //处理Item的指针位置;
+            handlePointerPos(pos){
+                this.$refs.handleE.style.top=(pos.height/2-5)+"px";
+                this.$refs.handleW.style.top=(pos.height/2-5)+"px";
+                this.$refs.handleN.style.left=(pos.width/2-5)+"px";
+                this.$refs.handleS.style.left=(pos.width/2-5)+"px";                
             }
         },
     }

@@ -1,5 +1,5 @@
 <template>
-    <div ref="item" class="vue-grid-layout" :style="mergedStyle">
+    <div ref="item" id="vueGridLayout" class="vue-grid-layout" :style="mergedStyle">
         <slot></slot>
         <grid-item class="vue-grid-placeholder"
                    v-show="isDragging"
@@ -7,15 +7,25 @@
                    :y="placeholder.y"
                    :w="placeholder.w"
                    :h="placeholder.h"
-                   :i="placeholder.i"></grid-item>
+                   :i="placeholder.i">
+        </grid-item>
     </div>
 </template>
 <style>
     .vue-grid-layout {
         position: relative;
         transition: height 200ms ease;
-        min-height:700px;
+        min-height:1100px;
+        background-color:#F2F6FA;
     }
+    .bgSection{
+        display: inline-block;
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background:#DEE8F2;
+    }
+
 </style>
 <script>
     import Vue from 'vue';
@@ -48,7 +58,7 @@
             },
             rowHeight: {
                 type: Number,
-                default: 150
+                default:100
             },
             maxRows: {
                 type: Number,
@@ -124,6 +134,7 @@
             removeWindowEventListener("resize", this.onWindowResize);
         },
         mounted: function() {
+            this.handleBgDiv();
             this.$nextTick(function () {
                 validateLayout(this.layout);
                 const self = this;
@@ -211,6 +222,7 @@
                 };
             },
             onWindowResize: function () {
+                this.handleBgDiv()
                 if (this.$refs !== null && this.$refs.item !== null && this.$refs.item !== undefined) {
                     this.width = this.$refs.item.offsetWidth;
                 }
@@ -282,6 +294,23 @@
                 this.updateHeight();
                 if (eventName === 'resizeend') this.$emit('layout-updated', this.layout);
             },
+             //初始化设置背景Div;
+            handleBgDiv(){
+                // debugger;
+                var gridLayout=document.getElementById("vueGridLayout");
+                var winWidth=document.body.offsetWidth;
+                var margin=this.margin[0];
+                var secWidth=(winWidth-13*10)/12;
+                var secHeight=100;
+                for(var j=0;j<10;j++){
+                    for(var i=0;i<12;i++){
+                        let secTop=j*secHeight+(j+1)*margin;
+                        let secLeft=i*secWidth+(i+1)*margin;
+                        gridLayout.insertAdjacentHTML('afterbegin','<div class="bgSection" style="left:'+secLeft+'px;width:'+secWidth+'px;top:'+secTop+'px"></div>');
+                    }
+                }
+            }
         },
+       
     }
 </script>

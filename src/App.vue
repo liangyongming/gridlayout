@@ -1,13 +1,11 @@
 <template>
     <div id="app">
         <div id="content">
-            <button @click="addItem">新增</button>
+            <!-- <button @click="addItem">新增</button>
             <input type="checkbox" v-model="draggable"/> Draggable
-            <input type="checkbox" v-model="resizable"/> Resizable
+            <input type="checkbox" v-model="resizable"/> Resizable -->
             <grid-layout
                 :layout="layout"
-                :col-num="parseInt(colNum)"
-                :row-height="rowHeight"
                 :is-draggable="draggable"
                 :is-resizable="resizable"
                 :vertical-compact="true"
@@ -20,10 +18,8 @@
                     @move="move"
                     @resized="resized"
                     @moved="moved"
-                    @delete="delItem"
-                    @edit="editItem"
                 >   
-                    <span>这是第{{parseInt(item.i)+1}}个元素</span>
+                <span>这是第{{parseInt(item.i)+1}}个</span>
                 </grid-item>
             </grid-layout>
         </div>
@@ -36,10 +32,10 @@
     import {getDocumentDir, setDocumentDir} from "./helpers/DOM";
 
     let testLayout = [
-        {"x":0,"y":0,"w":3,"h":2,"i":"0", resizable: true, draggable: true},
-        {"x":3,"y":0,"w":3,"h":4,"i":"1", resizable: null, draggable: null},
-        {"x":6,"y":0,"w":3,"h":5,"i":"2", resizable: false, draggable: false},
-        {"x":9,"y":0,"w":3,"h":3,"i":"3", resizable: false, draggable: false},
+        {"x":0,"y":0,"w":3,"h":1,"i":"0", resizable: true, draggable: true},
+        {"x":3,"y":0,"w":3,"h":2,"i":"1", resizable: null, draggable: null},
+        // {"x":6,"y":0,"w":3,"h":2,"i":"2", resizable: false, draggable: false},
+        // {"x":9,"y":0,"w":3,"h":4,"i":"3", resizable: false, draggable: false},
     ];
 
     export default {
@@ -53,9 +49,6 @@
                 layout: JSON.parse(JSON.stringify(testLayout)),
                 draggable: true,
                 resizable: true,
-                mirrored: false,
-                rowHeight: 30,
-                colNum: 12,
                 index: 0
             }
         },
@@ -80,19 +73,7 @@
                 this.index++;
                 this.layout.push(item);
             },
-            delItem:function(item){
-                console.log("delete",item);
-                let itemId=item.i;
-                for(var j=0;j<this.layout.length;j++){
-                    if(this.layout[j].i==itemId){
-                        this.layout.splice(j,1);
-                    }
-                }
-            },
-            editItem:function(item){
-                console.log("edit",item);
-                // let itemId=item.i;
-            },
+
             /**
              * Add change direction button
              */
