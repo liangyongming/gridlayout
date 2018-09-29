@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <div id="content">
+        <div>
             <!-- <button @click="addItem">新增</button>
             <input type="checkbox" v-model="draggable"/> Draggable
             <input type="checkbox" v-model="resizable"/> Resizable -->
@@ -14,12 +14,14 @@
                 <grid-item v-for="item in layout" :key="item.i" :x="item.x" :y="item.y" :w="item.w" 
                     :h="item.h"
                     :i="item.i"
+                    :min-w="item.minW"
+                    :max-w="item.maxW"
                     @resize="resize"
                     @move="move"
                     @resized="resized"
                     @moved="moved"
                 >   
-                <span>这是第{{parseInt(item.i)+1}}个</span>
+                <span class="infoWrap">这是第{{parseInt(item.i)+1}}个Item</span>
                 </grid-item>
             </grid-layout>
         </div>
@@ -34,7 +36,7 @@
     let testLayout = [
         {"x":0,"y":0,"w":3,"h":1,"i":"0", resizable: true, draggable: true},
         {"x":3,"y":0,"w":3,"h":2,"i":"1", resizable: null, draggable: null},
-        // {"x":6,"y":0,"w":3,"h":2,"i":"2", resizable: false, draggable: false},
+        // {"x":6,"y":0,"w":3,"h":2,"i":"2", "minW":2,"maxW":4, resizable: false, draggable: false},
         // {"x":9,"y":0,"w":3,"h":4,"i":"3", resizable: false, draggable: false},
     ];
 
@@ -60,7 +62,7 @@
                 console.log("MOVE i=" + i + ", X=" + newX + ", Y=" + newY);
             },
             moved: function(i, newX, newY){
-                    console.log("### MOVED i=" + i + ", X=" + newX + ", Y=" + newY);
+                console.log("### MOVED i=" + i + ", X=" + newX + ", Y=" + newY);
             },
             resize: function(i, newH, newW, newHPx, newWPx){
                 console.log("RESIZE i=" + i + ", H=" + newH + ", W=" + newW + ", H(px)=" + newHPx + ", W(px)=" + newWPx);
@@ -97,36 +99,31 @@
         margin:0;
     }
     #app {
-            font-family: 'Avenir', Helvetica, Arial, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            color: #2c3e50;
-        }
+        font-family: 'Avenir', Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        color: #2c3e50;
+    }
+    h1, h2 {
+        font-weight: normal;
+    }
 
-        h1, h2 {
-            font-weight: normal;
-        }
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
 
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
+    li {
+        display: inline-block;
+        margin: 0 10px;
+    }
 
-        li {
-            display: inline-block;
-            margin: 0 10px;
-        }
-
-        a {
-            color: #42b983;
-        }
-</style>
-
-<style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-}
+    a {
+        color: #42b983;
+    }
+    .infoWrap{
+        display: inline-block;
+        width:100%;
+        height:100%;
+    }
 </style>

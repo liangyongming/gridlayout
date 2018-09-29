@@ -25,7 +25,6 @@
         height: 100px;
         background:#DEE8F2;
     }
-
 </style>
 <script>
     import Vue from 'vue';

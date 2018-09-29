@@ -12,10 +12,10 @@
                 }"
          :style="style"
          :checked="isChecked"
-         @click.self.stop="handleItemCheck"
+         @click.stop="handleItemCheck"
     >
         <slot></slot>
-        <span v-show="resizable && isChecked" ref="handle" :class="resizableHandleClass"></span>
+        <span v-show="resizable && isChecked" ref="handleSe" class="vue-resizable-handle se-icon"></span>
         <span v-show="resizable && isChecked" ref="handleSw" class="vue-resizable-handle sw-icon"></span>
         <span v-show="resizable && isChecked" ref="handleNe" class="vue-resizable-handle ne-icon"></span>
         <span v-show="resizable && isChecked" ref="handleNw" class="vue-resizable-handle nw-icon"></span>
@@ -28,8 +28,8 @@
 <style>
     .vue-grid-item {
         transition: all 200ms ease;
-        transition-property: left, top, right;
-        /* add right for rtl */
+        transition-property: left, top, right,bottom;
+        box-sizing:border-box;
     }
 
     .vue-grid-item.cssTransforms {
@@ -37,17 +37,27 @@
         left: 0;
         right: auto;
     }
-
     .vue-grid-item.cssTransforms.render-rtl {
         left: auto;
         right: 0;
     }
-
     .vue-grid-item.resizing {
-        opacity: 0.6;
+        opacity: 0.9;
         z-index: 3;
     }
-
+    .vue-grid-item.static {
+    background: #cce;
+    }
+    .vue-grid-item .no-drag {
+        height: 100%;
+        width: 100%;
+    }
+    .vue-grid-item .minMax {
+        font-size: 12px;
+    }
+    .vue-grid-item .add {
+        cursor: pointer;
+    }
     .vue-grid-item.vue-draggable-dragging {
         transition:none;
         z-index: 3;
@@ -64,6 +74,9 @@
         -o-user-select: none;
         user-select: none;
     }
+    .vue-grid-item:not(.vue-grid-placeholder) {
+        background: #fff;
+    }
     .vue-grid-item.grid-item-checked{
         background:#fffff0;
         border:1px dashed #3e3e3e;
@@ -77,57 +90,49 @@
         border:1px solid #000;
         background-color:#fff;
         /* background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pg08IS0tIEdlbmVyYXRvcjogQWRvYmUgRmlyZXdvcmtzIENTNiwgRXhwb3J0IFNWRyBFeHRlbnNpb24gYnkgQWFyb24gQmVhbGwgKGh0dHA6Ly9maXJld29ya3MuYWJlYWxsLmNvbSkgLiBWZXJzaW9uOiAwLjYuMSAgLS0+DTwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DTxzdmcgaWQ9IlVudGl0bGVkLVBhZ2UlMjAxIiB2aWV3Qm94PSIwIDAgNiA2IiBzdHlsZT0iYmFja2dyb3VuZC1jb2xvcjojZmZmZmZmMDAiIHZlcnNpb249IjEuMSINCXhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbDpzcGFjZT0icHJlc2VydmUiDQl4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjZweCIgaGVpZ2h0PSI2cHgiDT4NCTxnIG9wYWNpdHk9IjAuMzAyIj4NCQk8cGF0aCBkPSJNIDYgNiBMIDAgNiBMIDAgNC4yIEwgNCA0LjIgTCA0LjIgNC4yIEwgNC4yIDAgTCA2IDAgTCA2IDYgTCA2IDYgWiIgZmlsbD0iIzAwMDAwMCIvPg0JPC9nPg08L3N2Zz4='); */
-        background-position: bottom right;
         padding: 0 3px 3px 0;
         background-repeat: no-repeat;
         background-origin: content-box;
         box-sizing: border-box;
         cursor: se-resize;
+        z-index:5000;
     }
     .vue-grid-item > .vue-resizable-handle.sw-icon{
         bottom:-5px;
         left:-5px;
-        background-position: bottom left;
-        cursor: sw-resize;
+        cursor: n-resize;
     }
     .vue-grid-item > .vue-resizable-handle.ne-icon{
         top:-5px;
         right:-5px;
-        background-position: top left;
-        cursor: ne-resize;
-    }
-    .vue-grid-item > .vue-resizable-handle.nw-icon{
-        top:-5px;
-        left:-5px;
-        background-position: top right;
-        cursor: nw-resize;
+        cursor: e-resize;
     }
     .vue-grid-item > .vue-resizable-handle.e-icon{
         top:50px;
         right:-5px;
-        background-position: center right;
         cursor: e-resize;
-    }
-    .vue-grid-item > .vue-resizable-handle.w-icon{
-        top:50px;
-        left:-5px;
-        background-position: center left;
-        cursor: w-resize;
-    }
-    .vue-grid-item > .vue-resizable-handle.n-icon{
-        top:-5px;
-        left:50px;
-        background-position: top center;
-        cursor: n-resize;
     }
     .vue-grid-item > .vue-resizable-handle.s-icon{
         bottom:-5px;
         left:50px;
-        background-position: bottom center;
         cursor: s-resize;
     }
-
-    .vue-grid-item > .vue-rtl-resizable-handle {
+    .vue-grid-item > .vue-resizable-handle.nw-icon{
+        top:-5px;
+        left:-5px;
+        cursor: all-scroll;
+    }
+    .vue-grid-item > .vue-resizable-handle.w-icon{
+        top:50px;
+        left:-5px;
+        cursor: all-scroll;
+    }
+    .vue-grid-item > .vue-resizable-handle.n-icon{
+        top:-5px;
+        left:50px;
+        cursor: all-scroll;
+    }
+    /* .vue-grid-item > .vue-rtl-resizable-handle {
         bottom: 0;
         left: 0;
         background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAuMDAwMDAwMDAwMDAwMDAyIiBoZWlnaHQ9IjEwLjAwMDAwMDAwMDAwMDAwMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KIDwhLS0gQ3JlYXRlZCB3aXRoIE1ldGhvZCBEcmF3IC0gaHR0cDovL2dpdGh1Yi5jb20vZHVvcGl4ZWwvTWV0aG9kLURyYXcvIC0tPgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5vbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSIxMiIgd2lkdGg9IjEyIiB5PSItMSIgeD0iLTEiLz4KICA8ZyBkaXNwbGF5PSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgeT0iMCIgeD0iMCIgaGVpZ2h0PSIxMDAlIiB3aWR0aD0iMTAwJSIgaWQ9ImNhbnZhc0dyaWQiPgogICA8cmVjdCBmaWxsPSJ1cmwoI2dyaWRwYXR0ZXJuKSIgc3Ryb2tlLXdpZHRoPSIwIiB5PSIwIiB4PSIwIiBoZWlnaHQ9IjEwMCUiIHdpZHRoPSIxMDAlIi8+CiAgPC9nPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxsaW5lIGNhbnZhcz0iI2ZmZmZmZiIgY2FudmFzLW9wYWNpdHk9IjEiIHN0cm9rZS1saW5lY2FwPSJ1bmRlZmluZWQiIHN0cm9rZS1saW5lam9pbj0idW5kZWZpbmVkIiBpZD0ic3ZnXzEiIHkyPSItNzAuMTc4NDA3IiB4Mj0iMTI0LjQ2NDE3NSIgeTE9Ii0zOC4zOTI3MzciIHgxPSIxNDQuODIxMjg5IiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlPSIjMDAwIiBmaWxsPSJub25lIi8+CiAgPGxpbmUgc3Ryb2tlPSIjNjY2NjY2IiBzdHJva2UtbGluZWNhcD0idW5kZWZpbmVkIiBzdHJva2UtbGluZWpvaW49InVuZGVmaW5lZCIgaWQ9InN2Z181IiB5Mj0iOS4xMDY5NTciIHgyPSIwLjk0NzI0NyIgeTE9Ii0wLjAxODEyOCIgeDE9IjAuOTQ3MjQ3IiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz4KICA8bGluZSBzdHJva2UtbGluZWNhcD0idW5kZWZpbmVkIiBzdHJva2UtbGluZWpvaW49InVuZGVmaW5lZCIgaWQ9InN2Z183IiB5Mj0iOSIgeDI9IjEwLjA3MzUyOSIgeTE9IjkiIHgxPSItMC42NTU2NCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2U9IiM2NjY2NjYiIGZpbGw9Im5vbmUiLz4KIDwvZz4KPC9zdmc+);
@@ -137,7 +142,7 @@
         background-origin: content-box;
         cursor: sw-resize;
         right: auto;
-    }
+    } */
     
     .vue-grid-item.disable-userselect {
         user-select: none;
@@ -149,7 +154,7 @@
     import {getControlPosition, createCoreData} from '../helpers/draggableUtils';
     import {getDocumentDir} from "../helpers/DOM";
     //    var eventBus = require('./eventBus');
-
+    //用于改变Div形状的插件;
     let interact = require("interactjs");
 
     export default {
@@ -248,7 +253,7 @@
             resizeIgnoreFrom: {
                 type: String,
                 required: false,
-                default: 'a, button'
+                default: 'a, button,span.n-icon,span.w-icon,span.nw-icon'
             },
         },
         inject: ["eventBus"],
@@ -436,13 +441,7 @@
             renderRtl() {
                 return (this.$parent.isMirrored) ? !this.rtl : this.rtl;
             },
-            resizableHandleClass() {
-                if (this.renderRtl) {
-                    return 'vue-resizable-handle vue-rtl-resizable-handle';
-                } else {
-                    return 'vue-resizable-handle';
-                }
-            }
+            // resizableHandleClass() {if (this.renderRtl) {return 'vue-resizable-handle vue-rtl-resizable-handle';} else {return 'vue-resizable-handle';}}
         },
         methods: {
             createStyle: function () {
@@ -455,16 +454,16 @@
                 }
                 let pos = this.calcPosition(this.innerX, this.innerY, this.innerW, this.innerH);
 
-
                 if (this.isDragging) {
                     pos.top = this.dragging.top;
-//                    Add rtl support
+                    //Add rtl support
                     if (this.renderRtl) {
                         pos.right = this.dragging.left;
                     } else {
                         pos.left = this.dragging.left;
                     }
                 }
+
                 if (this.isResizing) {
                     pos.width = this.resizing.width;
                     pos.height = this.resizing.height;
@@ -473,15 +472,12 @@
                 let style;
                 // CSS Transforms support (default)
                 if (this.useCssTransforms) {
-//                    Add rtl support
                     if (this.renderRtl) {
                         style = setTransformRtl(pos.top, pos.right, pos.width, pos.height);
                     } else {
                         style = setTransform(pos.top, pos.left, pos.width, pos.height);
                     }
-
                 } else { // top,left (slow)
-//                    Add rtl support
                     if (this.renderRtl) {
                         style = setTopRight(pos.top, pos.right, pos.width, pos.height);
                     } else {
@@ -491,8 +487,7 @@
                 this.style = style;
             },
             handleResize: function (event) {
-                const position = getControlPosition(event);
-                // Get the current drag point from the event. This is used as the offset.
+                const position = getControlPosition(event); // Get the current drag point from the event. This is used as the offset.
                 if (position == null) return; // not possible but satisfies flow
                 const {x, y} = position;
                 const newSize = {width: 0, height: 0};
@@ -509,25 +504,22 @@
                         break;
                     }
                     case "resizemove": {
-//                      console.log("### resize => " + event.type + ", lastW=" + this.lastW + ", lastH=" + this.lastH);
+                        // console.log("### resize => " + event.type + ", lastW=" + this.lastW + ", lastH=" + this.lastH);
                         const coreEvent = createCoreData(this.lastW, this.lastH, x, y);
-                        if (this.renderRtl) {
-                            newSize.width = this.resizing.width - coreEvent.deltaX;
-                        } else {
-                            newSize.width = this.resizing.width + coreEvent.deltaX;
-                        }
+                        // if (this.renderRtl) {newSize.width = this.resizing.width - coreEvent.deltaX;} else {newSize.width = this.resizing.width + coreEvent.deltaX;}
+                        newSize.width = this.resizing.width + coreEvent.deltaX;
                         newSize.height = this.resizing.height + coreEvent.deltaY;
 
-                        ///console.log("### resize => " + event.type + ", deltaX=" + coreEvent.deltaX + ", deltaY=" + coreEvent.deltaY);
+                        // console.log("### resize => " + event.type + ", deltaX=" + coreEvent.deltaX + ", deltaY=" + coreEvent.deltaY);
                         this.resizing = newSize;
                         break;
                     }
                     case "resizeend": {
-                        //console.log("### resize end => x=" +this.innerX + " y=" + this.innerY + " w=" + this.innerW + " h=" + this.innerH);
+                        // console.log("### resize end(Num)=> x=" +this.innerX + " y=" + this.innerY + " w=" + this.innerW + " h=" + this.innerH);
                         pos = this.calcPosition(this.innerX, this.innerY, this.innerW, this.innerH);
                         newSize.width = pos.width;
                         newSize.height = pos.height;
-//                        console.log("### resize end => " + JSON.stringify(newSize));
+                        // console.log("### resize end(px) => " + JSON.stringify(newSize));
                         this.resizing = null;
                         this.isResizing = false;
                         //处理resizeHandle的位置;
@@ -743,6 +735,7 @@
                 this.createStyle();
             },
             tryMakeResizable: function(){
+                // debugger;
                 const self = this;
                 if (this.interactObj === null || this.interactObj === undefined) {
                     this.interactObj = interact(this.$refs.item);
@@ -758,10 +751,10 @@
                         preserveAspectRatio: true,
                         // allowFrom: "." + this.resizableHandleClass,
                         edges: {
-                            left: false,
-                            right: "." + this.resizableHandleClass,
-                            bottom: "." + this.resizableHandleClass,
-                            top: false
+                            left: ".vue-resizable-handle",
+                            right: ".vue-resizable-handle",
+                            top: ".vue-resizable-handle",
+                            bottom:".vue-resizable-handle",
                         },
                         ignoreFrom: this.resizeIgnoreFrom,
                         restrictSize: {
@@ -840,7 +833,7 @@
                     });
                 }
                 this.isChecked=true;
-                console.log("isChecked:"+this.isChecked);
+                // console.log("isChecked:"+this.isChecked);
             },
             //处理Item的指针位置;
             handlePointerPos(pos){
